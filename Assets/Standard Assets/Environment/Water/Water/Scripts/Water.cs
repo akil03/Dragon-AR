@@ -2,7 +2,10 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace UnityStandardAssets.Water
+/// <summary>
+/// This is the same Camera PivotBasedCameraRig of the Stardard Assets but with the CrossPlatform Input Maganger Removed
+/// </summary>
+namespace MalbersAnimations
 {
     [ExecuteInEditMode] // Make water live-update even when not in play mode
     public class Water : MonoBehaviour

@@ -10,7 +10,7 @@ public class ARDetection : MonoBehaviour {
 	bool isSpawned;
 
 	public GameObject Plane;
-	public GameObject cubeSpawner;
+	//public GameObject cubeSpawner;
 
 	void Start () {
 		

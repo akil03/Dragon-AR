@@ -161,7 +161,7 @@ PlayerSettings:
     Android: com.Company.ProductName
     Standalone: unity.jeojeo.ArDragon
     Tizen: com.Company.ProductName
-    iOS: com.unity.arkitscene
+    iOS: com.jeojeo.arkitdragon
     tvOS: com.Company.ProductName
   buildNumber:
     iOS: 0

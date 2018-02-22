@@ -7,14 +7,18 @@ using DG;
 
 public class FollowUser : MonoBehaviour {
 
-	public Transform target;
-	private Vector3 lastPos;
-	public Transform dragonFollow;
-	public Text test1;
+	//public Transform target;
+	//private Vector3 lastPos;
+	//public Transform dragonFollow;
+	//public Text test1;
 	public static float height;
 	Vector3 newposition;
-	bool moveComplete = true;
+	public bool moveComplete = true;
 	public Ease eastType;
+	public Animator dragonAnimator;
+
+	public string flyAnimation;
+	public string[] idleAnimation;
 
 	void Start () {
 	}
@@ -39,7 +43,11 @@ public class FollowUser : MonoBehaviour {
 			if (hit.transform.gameObject != gameObject)
 			if (moveComplete == true) {
 				moveComplete = false;
-				transform.DOMove (objectHit, 1f, false).SetEase(eastType).OnComplete (() => moveComplete = true);
+				if (Vector3.Distance (transform.position, objectHit) > 0.1f) {
+					transform.LookAt (objectHit);
+					dragonAnimator.Play (flyAnimation);
+					transform.DOMove (objectHit, 1f, false).SetEase (eastType).OnComplete (() => onCompleteFunction ());
+				}
 			}
 			//	transform.position = objectHit;
 		}
@@ -53,5 +61,10 @@ public class FollowUser : MonoBehaviour {
 //			transform.position = Vector3.Lerp (transform.position, new Vector3(dragonFollow.position.x,height,dragonFollow.position.z), 2 * Time.deltaTime);
 //			//transform.Translate (Vector3.forward * (2*Time.deltaTime), Space.Self);
 //		}
+	}
+
+	void onCompleteFunction() {
+		dragonAnimator.Play (Random.Range(0,idleAnimation.Length));
+		moveComplete = true;
 	}
 }
