@@ -24,7 +24,7 @@ public class ARDetection : MonoBehaviour {
 		if (!isSpawned && focusSquare.activeSelf) {
 			SpawnObject.SetActive (true);
 			focusManager.SetActive (false);
-			SpawnObject.transform.position = focusSquare.transform.position;
+			//SpawnObject.transform.position = focusSquare.transform.position;
 			Plane.transform.SetParent(null);
 			FollowUser.height = focusSquare.transform.position.y;
 			isSpawned = true;

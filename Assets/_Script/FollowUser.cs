@@ -8,17 +8,22 @@ using DG;
 public class FollowUser : MonoBehaviour {
 
 	//public Transform target;
-	//private Vector3 lastPos;
+	private Vector3 lastPos;
 	//public Transform dragonFollow;
 	//public Text test1;
 	public static float height;
 	Vector3 newposition;
 	public bool moveComplete = true;
 	public Ease eastType;
+
 	public Animator dragonAnimator;
+	public Transform target;
 
 	public string flyAnimation;
 	public string[] idleAnimation;
+	public string flyIdle;
+	public string flyLand;
+
 
 	void Start () {
 	}
@@ -42,8 +47,9 @@ public class FollowUser : MonoBehaviour {
 			Vector3 objectHit = hit.point;
 			if (hit.transform.gameObject != gameObject)
 			if (moveComplete == true) {
-				moveComplete = false;
-				if (Vector3.Distance (transform.position, objectHit) > 0.1f) {
+				
+				if (Vector3.Distance (transform.position, objectHit) > 0.15f) {
+					moveComplete = false;
 					transform.LookAt (objectHit);
 					dragonAnimator.Play (flyAnimation);
 					transform.DOMove (objectHit, 1f, false).SetEase (eastType).OnComplete (() => onCompleteFunction ());
@@ -54,17 +60,27 @@ public class FollowUser : MonoBehaviour {
 	}
 
 	void Update() {
-		ProperRay ();
+//		ProperRay ();
 //		test1.text = Vector3.Distance (transform.position, target.position).ToString ();
-//		if ((Vector3.Distance(transform.position,target.position)) > 0.2f) {
-//			//transform.LookAt (dragonFollow);
-//			transform.position = Vector3.Lerp (transform.position, new Vector3(dragonFollow.position.x,height,dragonFollow.position.z), 2 * Time.deltaTime);
-//			//transform.Translate (Vector3.forward * (2*Time.deltaTime), Space.Self);
-//		}
+
+
+		if ((Vector3.Distance (transform.position, target.position)) > 0.25f) {
+			
+			float distance = Vector3.Distance (transform.position, target.position);
+			transform.LookAt (target);
+			dragonAnimator.Play (flyAnimation);
+			transform.DOMove (target.position, (distance * 1.5f), false).SetEase (eastType).OnComplete (() => onCompleteFunction ());
+
+
+		} 
 	}
 
 	void onCompleteFunction() {
-		dragonAnimator.Play (Random.Range(0,idleAnimation.Length));
+		lastPos = transform.position;
 		moveComplete = true;
+		//transform.LookAt (Camera.main.transform);
+		dragonAnimator.Play (idleAnimation[Random.Range(0,idleAnimation.Length)]);
+
+
 	}
 }

@@ -3,7 +3,7 @@ guid: c7b9ed1eb5ede424db387c8850cbcdb3
 timeCreated: 1464987305
 licenseType: Store
 ModelImporter:
-  serializedVersion: 19
+  serializedVersion: 22
   fileIDToRecycleName:
     100000: CG
     100002: CG WingBone1L
@@ -114,32 +114,38 @@ ModelImporter:
     9500000: //RootNode
     13700000: TD
     13700002: Drago03
+  externalObjects: {}
   materials:
     importMaterials: 0
     materialName: 0
     materialSearch: 1
+    materialLocation: 0
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
-    resampleRotations: 1
+    resampleCurves: 1
     optimizeGameObjects: 0
     motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
     animationCompression: 0
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
+    extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
       name: IdleSmell
       takeName: Take 001
       firstFrame: 0
-      lastFrame: 120
+      lastFrame: 119
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -1080,32 +1086,38 @@ ModelImporter:
         curve:
           serializedVersion: 2
           curve:
-          - time: 0
+          - serializedVersion: 2
+            time: 0
             value: 1
             inSlope: 0
             outSlope: 0
             tangentMode: 0
-          - time: 0.0946501
+          - serializedVersion: 2
+            time: 0.0946501
             value: 1
             inSlope: 0
             outSlope: 0
             tangentMode: 0
-          - time: 0.1522629
+          - serializedVersion: 2
+            time: 0.1522629
             value: 0
             inSlope: 0
             outSlope: 0
             tangentMode: 0
-          - time: 0.68686277
+          - serializedVersion: 2
+            time: 0.68686277
             value: 0
             inSlope: 0
             outSlope: 0
             tangentMode: 0
-          - time: 0.73133016
+          - serializedVersion: 2
+            time: 0.73133016
             value: 1
             inSlope: 0
             outSlope: 0
             tangentMode: 0
-          - time: 1
+          - serializedVersion: 2
+            time: 1
             value: 1
             inSlope: 0
             outSlope: 0
@@ -1117,32 +1129,38 @@ ModelImporter:
         curve:
           serializedVersion: 2
           curve:
-          - time: 0
+          - serializedVersion: 2
+            time: 0
             value: 0
             inSlope: 0
             outSlope: 0
             tangentMode: 0
-          - time: 0.055674803
+          - serializedVersion: 2
+            time: 0.055674803
             value: 0.5
             inSlope: 0
             outSlope: 0
             tangentMode: 0
-          - time: 0.10016858
+          - serializedVersion: 2
+            time: 0.10016858
             value: 0
             inSlope: 0
             outSlope: 0
             tangentMode: 0
-          - time: 0.62943476
+          - serializedVersion: 2
+            time: 0.62943476
             value: 0
             inSlope: 0
             outSlope: 0
             tangentMode: 0
-          - time: 0.7446467
+          - serializedVersion: 2
+            time: 0.7446467
             value: 0.5
             inSlope: 0
             outSlope: 0
             tangentMode: 0
-          - time: 1
+          - serializedVersion: 2
+            time: 1
             value: 0
             inSlope: 0
             outSlope: 0
@@ -1276,32 +1294,38 @@ ModelImporter:
         curve:
           serializedVersion: 2
           curve:
-          - time: 0
+          - serializedVersion: 2
+            time: 0
             value: 1
             inSlope: 0
             outSlope: 0
             tangentMode: 0
-          - time: 0.084361635
+          - serializedVersion: 2
+            time: 0.084361635
             value: 1
             inSlope: 0
             outSlope: 0
             tangentMode: 0
-          - time: 0.15226373
+          - serializedVersion: 2
+            time: 0.15226373
             value: 0
             inSlope: 0
             outSlope: 0
             tangentMode: 0
-          - time: 0.59114844
+          - serializedVersion: 2
+            time: 0.59114844
             value: 0
             inSlope: 0
             outSlope: 0
             tangentMode: 0
-          - time: 0.7076304
+          - serializedVersion: 2
+            time: 0.7076304
             value: 1
             inSlope: 0
             outSlope: 0
             tangentMode: 0
-          - time: 1
+          - serializedVersion: 2
+            time: 1
             value: 1
             inSlope: 0
             outSlope: 0
@@ -1536,13 +1560,18 @@ ModelImporter:
     globalScale: 1
     meshCompression: 0
     addColliders: 0
+    importVisibility: 0
     importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
     optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
@@ -1552,9 +1581,11 @@ ModelImporter:
     normalSmoothAngle: 60
     normalImportMode: 0
     tangentImportMode: 3
+    normalCalculationMode: 0
   importAnimation: 1
   copyAvatar: 1
   humanDescription:
+    serializedVersion: 2
     human: []
     skeleton: []
     armTwist: 0.5
@@ -1565,7 +1596,10 @@ ModelImporter:
     legStretch: 0.05
     feetSpacing: 0
     rootMotionBoneName: CG
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
     hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 0
   lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: c869acf0f32d55340b4dd39f39cc49f3,
     type: 3}
   animationType: 2
