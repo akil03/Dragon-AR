@@ -16,5 +16,6 @@ public class DragonSleepExit : MonoBehaviour {
 
 	void OnMouseDown() {
 		positionManager.Instance.AwakeAnimationCalled ();
+		//fetchscriptTest.Instance.hit = false;
 	}
 }
