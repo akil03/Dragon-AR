@@ -7,41 +7,44 @@ using DG;
 
 public class fetchscriptTest : MonoBehaviour {
 
+	public static fetchscriptTest Instance;
 
-	public bool hit = false;
-	public GameObject dragon;
+	private GameObject dragon;
+	private GameObject target;
+
 	public Vector3 initialPosition;
 	public Vector3 hitPosition;
-	public static fetchscriptTest Instance;
-	public Transform targetholdingpoint;
+
+	public bool hit = false;
 	public bool Free = true;
+	private bool Fetch = false;
+
+	public Transform targetholdingpoint;
 	public Transform dragoninitialPosition;
 
-	GameObject target;
-	RaycastHit Hit;
-	// Use this for initialization
-	void Start () {
-		
+	private RaycastHit Hit;
+
+	void Start() {
+		dragon = positionManager.Instance.dragon;
+		Vector3 dragonLandingPosition = new Vector3 (dragon.transform.position.x, dragon.transform.position.y - 0.2f, dragon.transform.position.z);
+		dragoninitialPosition.position = dragonLandingPosition;
 	}
 
 	void Awake() {
 		Instance = this;
 	}
-	// Update is called once per frame
-
 		void Update()
 	{
 		if (Input.GetMouseButton (0)) {
-			print (hit);
-			if (Free == true) {
+			if (Free == true&& Fetch == false) {
 				if (hit == false) {
 					Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 					if (Physics.Raycast (ray, out Hit)) {
-						print (Hit.transform.gameObject.name);
-						target = Hit.transform.gameObject;
+						Fetch = true;
 						if (Hit.transform.gameObject.tag == "Player" || Hit.transform.gameObject.tag == "UI") {
 							return;
 						} else {
+							target = Hit.transform.gameObject;
 							hitPosition = Hit.point;
 							positionManager.Instance.IdleToFetch ();
 							positionManager.Instance.Fetchcalled ();
@@ -60,40 +63,36 @@ public class fetchscriptTest : MonoBehaviour {
 		hit = false;
 	}
 
-
-
 	public void FetchMovement() {
 		dragon.transform.LookAt (Hit.transform);
-		//initialPosition.y = initialPosition.y +0.1f;
 		dragon.transform.DOMove (Hit.point, 2f, false).OnComplete (() =>onCompleteCalled() );
 	}
 
 	public void FetchBackMovement() {
-		//initialPosition.y = initialPosition.y -0.1f;
+		print (dragoninitialPosition.position);
 		dragon.transform.DOMove (dragoninitialPosition.position, 2f, false).OnComplete(() => onRetreveFinished());
 	}
 
 	public void onRetreveFinished() {
-		//Hit.transform.position = new Vector3 (Hit.transform.position.x, Hit.transform.position.y-0.08f, Hit.transform.position.z - 0.12f);
-
+		dragon.transform.position = dragoninitialPosition.position;
+		Free = false;
+		Fetch = false;
 		Hit.transform.SetParent (Camera.main.transform);
 		Hit.transform.localPosition = new Vector3 (0,-0.462f,1.05f);
 		Hit.transform.localScale = new Vector3 (0.5f,0.5f,0.5f);
 		positionManager.Instance.FetchComplete ();
-
 	}
 
 	public void ThrowHit() {
+		print (target.transform.gameObject.name);
 		Invoke("Targetdestroy",0.5f);
 	}
 
-	public void EatHit() {
+	public void Eat() {
 		Invoke("Targetdestroy",4f);
 	}
 
 	void Targetdestroy() {
 		target.transform.gameObject.SetActive(false);
 	}
-
-
 }
