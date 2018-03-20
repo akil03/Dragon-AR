@@ -18,6 +18,7 @@ public class fetchscriptTest : MonoBehaviour {
 	public bool hit = false;
 	public bool Free = true;
 	private bool Fetch = false;
+	public bool Voice = false;
 
 	public Transform targetholdingpoint;
 	public Transform dragoninitialPosition;
@@ -36,7 +37,7 @@ public class fetchscriptTest : MonoBehaviour {
 		void Update()
 	{
 		if (Input.GetMouseButton (0)) {
-			if (Free == true&& Fetch == false) {
+			if (Free == true&& Fetch == false && Voice == false) {
 				if (hit == false) {
 					Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 					if (Physics.Raycast (ray, out Hit)) {
@@ -57,15 +58,15 @@ public class fetchscriptTest : MonoBehaviour {
 
 	public void onCompleteCalled() {
 		dragon.transform.LookAt (Camera.main.transform);
-		Hit.transform.SetParent (targetholdingpoint);
-		Hit.transform.localPosition = new Vector3 (0,0,0);
+		target.transform.SetParent (targetholdingpoint);
+		target.transform.localPosition = new Vector3 (0,0,0);
 		FetchBackMovement ();
 		hit = false;
 	}
 
 	public void FetchMovement() {
-		dragon.transform.LookAt (Hit.transform);
-		dragon.transform.DOMove (Hit.point, 2f, false).OnComplete (() =>onCompleteCalled() );
+		dragon.transform.LookAt (target.transform);
+		dragon.transform.DOMove (hitPosition, 2f, false).OnComplete (() =>onCompleteCalled() );
 	}
 
 	public void FetchBackMovement() {
@@ -77,9 +78,9 @@ public class fetchscriptTest : MonoBehaviour {
 		dragon.transform.position = dragoninitialPosition.position;
 		Free = false;
 		Fetch = false;
-		Hit.transform.SetParent (Camera.main.transform);
-		Hit.transform.localPosition = new Vector3 (0,-0.462f,1.05f);
-		Hit.transform.localScale = new Vector3 (0.5f,0.5f,0.5f);
+		target.transform.SetParent (Camera.main.transform);
+		target.transform.localPosition = new Vector3 (0,-0.462f,1.05f);
+		target.transform.localScale = new Vector3 (0.5f,0.5f,0.5f);
 		positionManager.Instance.FetchComplete ();
 	}
 
@@ -94,5 +95,14 @@ public class fetchscriptTest : MonoBehaviour {
 
 	void Targetdestroy() {
 		target.transform.gameObject.SetActive(false);
+	}
+
+	public void VoiceFetchCalled(GameObject Target) {
+		CancelInvoke ();
+		Fetch = true;
+		target = Target;
+		hitPosition = Target.transform.position;
+		positionManager.Instance.IdleToFetch ();
+		positionManager.Instance.Fetchcalled ();
 	}
 }

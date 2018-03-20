@@ -9,6 +9,7 @@ public class positionManager : MonoBehaviour {
 	public float distancebetween;
 	public float distance;
 	public float movementThreshold;
+	public GameObject recordButton;
 
 	public GameObject[] dragonList;
 	public GameObject landingSurface;
@@ -30,13 +31,19 @@ public class positionManager : MonoBehaviour {
 	public bool flyCalled = true;
 	public bool FreeFly = false;
 	public bool isCameraMoving;
+	public bool voice = false;
 
 	public Vector3 prevPosition;
 	public Vector3 lastPos;
 	public Vector3 newPos;
 
+	public List<CheckVisible> checkVisibleScripts;
+
 	public GameObject dragon;
 	private Animator dragonAnimator;
+
+	private float targetDistance = 1000;
+	public GameObject targetObject;
 
 	void Start () {
 		dragon.SetActive (true);
@@ -62,7 +69,7 @@ public class positionManager : MonoBehaviour {
 	}
 
 	void Update () {
-		if (sleep == false) {
+		if (sleep == false && voice == false) {
 			if(FreeFly == false) {
 				if (Free == true) {
 					newPos = focusCube.position;
@@ -114,7 +121,7 @@ public class positionManager : MonoBehaviour {
 		landingSurface.transform.DOLocalMove (new Vector3 (0, -0.835f, 1.2f), 0.5f, false);
 		dragon.transform.localEulerAngles = new Vector3 (0, 0, 0);
 		dragonAnimator.applyRootMotion = false;
-		dragonAnimator.Play ("Fly Land");
+		dragonAnimator.Play ("Fly land");
 	}
 		
 	void IdleAnimationcalled() {
@@ -167,6 +174,7 @@ public class positionManager : MonoBehaviour {
 
 	public void IdleToFetch() {
 		if (sleep == false) {
+			recordButton.SetActive (false);
 			if (flyCalled == false) {
 				fetchscriptTest.Instance.Free = false;
 				dragonAnimator.applyRootMotion = false;
@@ -183,6 +191,7 @@ public class positionManager : MonoBehaviour {
 
 	public void FetchComplete() {
 		Free = false;
+		voice = false;
 		buttoncontainer.SetActive (true);
 		CancelInvoke ("LandingCalled");
 		CancelInvoke ("SetFree");
@@ -209,7 +218,7 @@ public class positionManager : MonoBehaviour {
 
 	void SleepAnimationCalled() {
 		sleep = true;
-		dragonAnimator.Play ("Sleep Enter");
+		dragonAnimator.Play ("Sleep enter");
 	}
 
 	public void AwakeAnimationCalled() {
@@ -217,7 +226,7 @@ public class positionManager : MonoBehaviour {
 			CancelInvoke ("LandingCalled");
 			CancelInvoke ("IdleAnimationcalled");
 			CancelInvoke ("TackOffCalled");
-			dragonAnimator.Play ("Sleep Exit");
+			dragonAnimator.Play ("Sleep exit");
 			idleCallled = true;
 			flyCalled = false;
 			Invoke ("IdleAnimationcalled", 2.05f);
@@ -237,7 +246,7 @@ public class positionManager : MonoBehaviour {
 		CancelInvoke ("TackOffCalled");
 		flyCalled = false;
 		Invoke ("SadAnimationCalled",10f);
-		dragonAnimator.Play ("Eat_Drink");
+		dragonAnimator.Play ("Eat");
 		fetchscriptTest.Instance.Eat ();
 		fetchscriptTest.Instance.Free = true;
 		Invoke ("FreeBool",4f);
@@ -274,6 +283,39 @@ public class positionManager : MonoBehaviour {
 	}
 
 	public void FreeBool() {
+		recordButton.SetActive (true);
 		Free = true;
+	}
+
+	public void VoiceFreeFlyCalled () {
+		//voice = true;
+		CancelInvoke ();
+		SetFree ();
+	}
+
+	public void VoiceAnimationCalled(string AnimationName) {
+		CancelInvoke ();
+		dragonAnimator.Play (AnimationName);
+	}
+
+	public void VoiceFetchCalled() {
+		voice = true;
+		CancelInvoke ();
+		foreach (CheckVisible target in checkVisibleScripts) {
+			if (target.Visible == true) {
+				float distancebetween = Vector3.Distance (dragon.transform.position, target.gameObject.transform.position);
+				if (distancebetween < targetDistance) {
+					targetDistance = distancebetween;
+					targetObject = target.gameObject;
+				}
+			}
+		}
+		fetchscriptTest.Instance.VoiceFetchCalled (targetObject);
+
+	}
+
+	public void VoiceStopCalled() {
+		CancelInvoke ();
+		dragonAnimator.Play ("Idle");
 	}
 }

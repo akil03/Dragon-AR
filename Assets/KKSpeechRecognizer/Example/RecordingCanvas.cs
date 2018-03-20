@@ -7,7 +7,7 @@ public class RecordingCanvas : MonoBehaviour {
 
 	public Button startRecordingButton;
 	public Text resultText;
-	public Animator dragonAnimator;
+
 
 	void Start() {
 		if (SpeechRecognizer.ExistsOnDevice()) {
@@ -26,15 +26,21 @@ public class RecordingCanvas : MonoBehaviour {
 			startRecordingButton.enabled = false;
 		}
 
+		OnStartRecordingPressed ();
+
 	}
 
 	public void OnFinalResult(string result) {
-		//resultText.text = result;
-//		if(result == "Pick up") {
-//			/positionManager.Instance.PickUpSpeachCalled ();
-//		} else if (result == "Free fly") {
-//			positionManager.Instance.SetFree
-//		}
+		resultText.text = result;
+		if (result == "Pick up") {
+			positionManager.Instance.VoiceFetchCalled();
+		} else if (result == "Free fly") {
+			positionManager.Instance.VoiceFreeFlyCalled ();
+		} else if (result == "Stop"){
+			positionManager.Instance.VoiceStopCalled ();
+		} else {
+			positionManager.Instance.VoiceAnimationCalled (result);
+		}
 	}
 
 	public void OnPartialResult(string result) {
@@ -73,6 +79,7 @@ public class RecordingCanvas : MonoBehaviour {
 	}
 
 	public void OnStartRecordingPressed() {
+		positionManager.Instance.voice = true;
 		if (SpeechRecognizer.IsRecording()) {
 			SpeechRecognizer.StopIfRecording();
 			startRecordingButton.GetComponentInChildren<Text>().text = "Start Recording";
