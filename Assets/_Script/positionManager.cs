@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG;
 using DG.Tweening;
+using UnityEngine.UI;
 
 public class positionManager : MonoBehaviour {
 
@@ -10,6 +11,7 @@ public class positionManager : MonoBehaviour {
 	public float distance;
 	public float movementThreshold;
 	public GameObject recordButton;
+	public Text animationTiming;
 
 	public GameObject[] dragonList;
 	public GameObject landingSurface;
@@ -36,26 +38,31 @@ public class positionManager : MonoBehaviour {
 	public Vector3 prevPosition;
 	public Vector3 lastPos;
 	public Vector3 newPos;
+	//RuntimeAnimatorController ac;
 
 	public List<CheckVisible> checkVisibleScripts;
 
+
+
 	public GameObject dragon;
-	private Animator dragonAnimator;
+	public Animator dragonAnimator;
 
 	private float targetDistance = 1000;
 	public GameObject targetObject;
 
 	void Start () {
 		dragon.SetActive (true);
-		dragonAnimator = dragon.GetComponent<Animator>();
+
 		lastPos = focusCube.position;
 		InvokeRepeating ("CheckCameraMove", 0, 0.5f);
+		//ac = dragonAnimator.runtimeAnimatorController;
 	}
 		
 	void Awake() {
 		
 		Instance = this;
 		dragon = dragonList [Random.Range (0, dragonList.Length)];
+		dragonAnimator = dragon.GetComponent<Animator>();
 
 	}
 
@@ -115,6 +122,7 @@ public class positionManager : MonoBehaviour {
 	}
 
 	void LandingCalled() {
+		RecordingCanvas.Instance.isIdle = true;
 		flyCalled = false;
 		Vector3 idlePosition = new Vector3 (dragon.transform.localPosition.x, dragon.transform.localPosition.y - 0.2f, dragon.transform.localPosition.z);
 		dragon.transform.DOLocalMove (idlePosition, 0.18f, false).OnComplete(() => Turn180());
@@ -139,14 +147,15 @@ public class positionManager : MonoBehaviour {
 		}
 	}
 
-	void TackOffCalled() {
+	public void takeOffCalled() {
+		RecordingCanvas.Instance.isIdle = false;
 		CancelInvoke ("SleepAnimationCalled");
 		CancelInvoke ("SetFree");
 		dragonAnimator.applyRootMotion = false;
 		Vector3 flyPosition = new Vector3 (dragon.transform.localPosition.x, dragon.transform.localPosition.y + 0.2f, dragon.transform.localPosition.z);
 		landingSurface.transform.DOLocalMove (new Vector3 (0, -2.8f, 1.15f), 0.5f, false);
 		dragon.transform.DOLocalMove (flyPosition, 0.14f, false);
-		dragonAnimator.Play ("Fly Take off");
+		dragonAnimator.Play ("Fly take off");
 		dragon.transform.localEulerAngles = new Vector3 (-20, 0, 0);
 		Invoke ("FlyCalled", 0.14f);
 	}
@@ -164,7 +173,7 @@ public class positionManager : MonoBehaviour {
 	void ReverseTurn180() {
 		dragonAnimator.applyRootMotion = true;
 		dragonAnimator.Play ("Turn 180 L");
-		Invoke ("TackOffCalled",1.02f);
+		Invoke ("takeOffCalled",1.02f);
 	}
 		
 	public void Fetchcalled() {
@@ -225,7 +234,7 @@ public class positionManager : MonoBehaviour {
 		if (sleep == true) {
 			CancelInvoke ("LandingCalled");
 			CancelInvoke ("IdleAnimationcalled");
-			CancelInvoke ("TackOffCalled");
+			CancelInvoke ("takeOffCalled");
 			dragonAnimator.Play ("Sleep exit");
 			idleCallled = true;
 			flyCalled = false;
@@ -243,7 +252,7 @@ public class positionManager : MonoBehaviour {
 		CancelInvoke ("LandingCalled");
 		CancelInvoke ("SadAnimationCalled");
 		CancelInvoke ("IdleAnimationcalled");
-		CancelInvoke ("TackOffCalled");
+		CancelInvoke ("takeOffCalled");
 		flyCalled = false;
 		Invoke ("SadAnimationCalled",10f);
 		dragonAnimator.Play ("Eat");
@@ -257,7 +266,7 @@ public class positionManager : MonoBehaviour {
 		buttoncontainer.SetActive (false);
 		CancelInvoke ("LandingCalled");
 		CancelInvoke ("IdleAnimationcalled");
-		CancelInvoke ("TackOffCalled");
+		CancelInvoke ("takeOffCalled");
 		Invoke ("SadAnimationCalled",5f);
 		flyCalled = false;
 		dragonAnimator.Play (hitAnimations[Random.Range(0,hitAnimations.Length)]);
@@ -270,16 +279,17 @@ public class positionManager : MonoBehaviour {
 		talkButton.SetActive (false);
 		CancelInvoke ("LandingCalled");
 		CancelInvoke ("IdleAnimationcalled");
-		CancelInvoke ("TackOffCalled");
+		CancelInvoke ("takeOffCalled");
 		dragonAnimator.Play ("Talk");
 	}
 
 	public void SetFree() {
+		RecordingCanvas.Instance.isIdle = false;
 		dragon.transform.SetParent (null);
 		FreeFly = true;
 		dragonAnimator.applyRootMotion = true;
 		landingSurface.transform.DOLocalMove (new Vector3 (0, -2.8f, 1.15f), 0.5f, false);
-		dragonAnimator.Play ("Fly Take off 0");
+		dragonAnimator.Play ("Fly take off 0");
 	}
 
 	public void FreeBool() {
@@ -296,6 +306,15 @@ public class positionManager : MonoBehaviour {
 	public void VoiceAnimationCalled(string AnimationName) {
 		CancelInvoke ();
 		dragonAnimator.Play (AnimationName);
+		float animatTime = dragonAnimator.GetCurrentAnimatorStateInfo(0).length;
+		StartCoroutine (IsreadyforRecording (animatTime));
+	}
+
+	IEnumerator IsreadyforRecording(float animationTime) {
+		animationTiming.text = animationTime.ToString ();
+		yield return new WaitForSeconds (animationTime);
+
+		RecordingCanvas.Instance.isReadyForrecording = true;
 	}
 
 	public void VoiceFetchCalled() {
@@ -318,4 +337,13 @@ public class positionManager : MonoBehaviour {
 		CancelInvoke ();
 		dragonAnimator.Play ("Idle");
 	}
+
+	public IEnumerator VoiceCommend(string cmds) {
+		CancelInvoke ();
+		dragonAnimator.Play (cmds);
+		float animatTime = dragonAnimator.GetCurrentAnimatorStateInfo (0).length;
+		yield return new WaitForSeconds (animatTime);
+		RecordingCanvas.Instance.isReadyForrecording = true;
+	}
+
 }
