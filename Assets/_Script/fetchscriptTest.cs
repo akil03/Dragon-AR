@@ -36,7 +36,8 @@ public class fetchscriptTest : MonoBehaviour {
 	}
 		void Update()
 	{
-		if (Input.GetMouseButton (0)) {
+		dragon = positionManager.Instance.dragon;
+		if (Input.GetMouseButton (0)&& positionManager.Instance.UI == false) {
 			if (Free == true&& Fetch == false && Voice == false) {
 				if (hit == false) {
 					Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);

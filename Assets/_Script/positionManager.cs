@@ -17,6 +17,9 @@ public class positionManager : MonoBehaviour {
 	public GameObject landingSurface;
 	public GameObject buttoncontainer;
 	public GameObject talkButton;
+	public GameObject uiLanding;
+	public GameObject selectionScreen;
+	public GameObject dragonButton;
 
 	public string[] idleAnimations;
 	public static positionManager Instance;
@@ -34,15 +37,15 @@ public class positionManager : MonoBehaviour {
 	public bool FreeFly = false;
 	public bool isCameraMoving;
 	public bool voice = false;
+	public bool UI;
 
 	public Vector3 prevPosition;
 	public Vector3 lastPos;
 	public Vector3 newPos;
-	//RuntimeAnimatorController ac;
 
 	public List<CheckVisible> checkVisibleScripts;
 
-
+	public int index;
 
 	public GameObject dragon;
 	public Animator dragonAnimator;
@@ -52,18 +55,17 @@ public class positionManager : MonoBehaviour {
 
 	void Start () {
 		dragon.SetActive (true);
-
 		lastPos = focusCube.position;
 		InvokeRepeating ("CheckCameraMove", 0, 0.5f);
 		//ac = dragonAnimator.runtimeAnimatorController;
+
 	}
 		
 	void Awake() {
-		
+		UI = false;
 		Instance = this;
-		dragon = dragonList [Random.Range (0, dragonList.Length)];
+		dragon = dragonList[0];
 		dragonAnimator = dragon.GetComponent<Animator>();
-
 	}
 
 	void CheckCameraMove(){
@@ -76,43 +78,46 @@ public class positionManager : MonoBehaviour {
 	}
 
 	void Update () {
-		if (sleep == false && voice == false) {
-			if(FreeFly == false) {
-				if (Free == true) {
-					newPos = focusCube.position;
-					distance = Vector3.Distance (lastPos, newPos);
-					if (distance < 0.4) {
-						if (idleCallled == false) {
-							idleCallled = true;
+		if (UI == false) {
+			uiLanding.SetActive (false);
+			if (sleep == false && voice == false) {
+				if (FreeFly == false) {
+					if (Free == true) {
+						newPos = focusCube.position;
+						distance = Vector3.Distance (lastPos, newPos);
+						if (distance < 0.4) {
+							if (idleCallled == false) {
+								idleCallled = true;
+								CancelInvoke ("SetFree");
+								CancelInvoke ("LandingCalled");
+								CancelInvoke ("IdleAnimationcalled");
+								CancelInvoke ("SadAnimationCalled");
+								Invoke ("LandingCalled", 5f);
+								lastPos = focusCube.position;
+							}
+						} else {
+							dragon.transform.SetParent (Camera.main.transform);
+							idleCallled = false;
+							dragonAnimator.applyRootMotion = false;
 							CancelInvoke ("SetFree");
 							CancelInvoke ("LandingCalled");
 							CancelInvoke ("IdleAnimationcalled");
 							CancelInvoke ("SadAnimationCalled");
-							Invoke ("LandingCalled", 5f);
+							if (flyCalled == false) {
+								flyCalled = true;
+								Invoke ("ReverseTurn180", 0.1f);
+								idleCallled = false;
+							}
 							lastPos = focusCube.position;
 						}
-					} else {
-						dragon.transform.SetParent (Camera.main.transform);
-						idleCallled = false;
-						dragonAnimator.applyRootMotion = false;
-						CancelInvoke ("SetFree");
-						CancelInvoke ("LandingCalled");
-						CancelInvoke ("IdleAnimationcalled");
-						CancelInvoke ("SadAnimationCalled");
-						if (flyCalled == false) {
-							flyCalled = true;
-							Invoke ("ReverseTurn180", 0.1f);
-							idleCallled = false;
-						}
-						lastPos = focusCube.position;
 					}
 				}
 			}
-		}
-		if (FreeFly == true) {
-			float distancebetween = Vector3.Distance (Camera.main.transform.position, dragon.transform.position);
-			if (distancebetween > 4f) {
-				dragon.transform.LookAt (Camera.main.transform);
+			if (FreeFly == true) {
+				float distancebetween = Vector3.Distance (Camera.main.transform.position, dragon.transform.position);
+				if (distancebetween > 4f) {
+					dragon.transform.LookAt (Camera.main.transform);
+				}
 			}
 		}
 	}
@@ -122,6 +127,7 @@ public class positionManager : MonoBehaviour {
 	}
 
 	void LandingCalled() {
+		dragonButton.SetActive (false);
 		RecordingCanvas.Instance.isIdle = true;
 		flyCalled = false;
 		Vector3 idlePosition = new Vector3 (dragon.transform.localPosition.x, dragon.transform.localPosition.y - 0.2f, dragon.transform.localPosition.z);
@@ -139,7 +145,7 @@ public class positionManager : MonoBehaviour {
 		string CurrentAnimation = idleAnimations [Random.Range (0, idleAnimations.Length)];
 		dragonAnimator.Play (CurrentAnimation);
 		int Random1 = Random.Range (0, 10);
-
+		dragonButton.SetActive (false);
 		if (Random1 > 5) {
 			Invoke ("SetFree",10f);
 		} else {
@@ -161,6 +167,8 @@ public class positionManager : MonoBehaviour {
 	}
 
 	void FlyCalled() {
+		idleCallled = false;
+		dragonButton.SetActive (true);
 		dragonAnimator.Play ("Fly Foward");
 	}
 
@@ -289,11 +297,11 @@ public class positionManager : MonoBehaviour {
 		FreeFly = true;
 		dragonAnimator.applyRootMotion = true;
 		landingSurface.transform.DOLocalMove (new Vector3 (0, -2.8f, 1.15f), 0.5f, false);
-		dragonAnimator.Play ("Fly take off 0");
+		dragonAnimator.Play ("Fly Take off 0");
 	}
 
 	public void FreeBool() {
-		recordButton.SetActive (true);
+		//recordButton.SetActive (true);
 		Free = true;
 	}
 
@@ -346,4 +354,17 @@ public class positionManager : MonoBehaviour {
 		RecordingCanvas.Instance.isReadyForrecording = true;
 	}
 
-}
+	public void selectDragon() {
+		UI = false;
+		dragonButton.SetActive (true);
+		selectionScreen.SetActive (false);
+		dragonAnimator = dragon.GetComponent<Animator>();
+	}
+
+	public void seclectionScreenSlelected() {
+		dragonButton.SetActive (false);
+		CancelInvoke ();
+		UI = true;
+		selectionScreen.SetActive (true);
+	}
+}  
